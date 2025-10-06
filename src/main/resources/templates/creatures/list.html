@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
         }
 
         .card {
-            background: #fffde7; /* やさしいクリーム色 */
+            background: #fffde7;
             border-radius: 20px;
             padding: 20px 30px;
             margin: 30px auto;
@@ -107,17 +107,12 @@
     </style>
 </head>
 <body>
-    <!-- ロゴ -->
     <div class="logo">
         <img th:src="@{/images/logo.png}" alt="ロゴ" width="400">
     </div>
 
-    <!-- カード -->
     <div class="card">
-
-        <!-- 検索フォームを2列配置 -->
         <div class="forms">
-            <!-- 名前検索 -->
             <div class="form-box">
                 <h3>名前で検索</h3>
                 <form th:action="@{/atsumori/searchByName}" method="get">
@@ -126,7 +121,6 @@
                 </form>
             </div>
 
-            <!-- 月と半球検索 -->
             <div class="form-box">
                 <h3>月と半球で検索</h3>
                 <form th:action="@{/atsumori/search}" method="get">
@@ -144,13 +138,9 @@
             </div>
         </div>
 
-        <!-- 検索結果メッセージ -->
         <p th:if="${searchMessage}" th:text="${searchMessage}" class="search-message"></p>
-
-        <!-- エラーメッセージ -->
         <p th:if="${errorMessage}" th:text="${errorMessage}" class="error"></p>
 
-        <!-- 生き物一覧 -->
         <table>
             <thead>
                 <tr>
@@ -167,22 +157,9 @@
                     <td th:text="${creature.name}">名前</td>
                     <td>
                         <b>北半球:</b>
-                        <span th:if="${not creature.northernAppearancePeriods.empty}">
-                            <span th:each="period, iterStat : ${creature.northernAppearancePeriods}">
-                                <span th:text="${period.startMonth + '〜' + period.endMonth + '月'}"></span>
-                                <span th:if="${!iterStat.last}">, </span>
-                            </span>
-                        </span>
-                        <span th:if="${creature.northernAppearancePeriods.empty}">なし</span>
-                        <br/>
+                        <span th:text="${creature.getFormattedAppearancePeriod('北半球')}">11月〜3月</span><br/>
                         <b>南半球:</b>
-                        <span th:if="${not creature.southernAppearancePeriods.empty}">
-                            <span th:each="period, iterStat : ${creature.southernAppearancePeriods}">
-                                <span th:text="${period.startMonth + '〜' + period.endMonth + '月'}"></span>
-                                <span th:if="${!iterStat.last}">, </span>
-                            </span>
-                        </span>
-                        <span th:if="${creature.southernAppearancePeriods.empty}">なし</span>
+                        <span th:text="${creature.getFormattedAppearancePeriod('南半球')}">5月〜9月</span>
                     </td>
                     <td>
                         <span th:each="area, iterStat : ${creature.areas}">
@@ -200,7 +177,8 @@
             </tbody>
         </table>
     </div>
-	<!-- メニュー画面へ -->
-	<a th:href="@{/}">メニュー画面へ</a>
+
+    <a th:href="@{/}">メニュー画面へ</a>
 </body>
 </html>
+
