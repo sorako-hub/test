@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.atsumori.repository.AtsumoriMapper">
+
+    <!-- AppearancePeriod用resultMap -->
+    <resultMap id="AppearancePeriodResultMap" type="com.example.atsumori.entity.AppearancePeriod">
+        <id property="id" column="period_id"/>
+        <result property="hemisphere" column="hemisphere"/>
+        <result property="startMonth" column="start_month"/>
+        <result property="endMonth" column="end_month"/>
+    </resultMap>
+
+    <!-- AppearanceTime用resultMap -->
+    <resultMap id="AppearanceTimeResultMap" type="com.example.atsumori.entity.AppearanceTime">
+        <id property="id" column="time_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+    </resultMap>
+
+    <!-- Area用resultMap -->
+    <resultMap id="AreaResultMap" type="com.example.atsumori.entity.Area">
+        <id property="id" column="area_id"/>
+        <result property="name" column="area_name"/>
+    </resultMap>
+
+    <!-- Creatures用resultMap -->
+    <resultMap id="CreaturesResultMap" type="com.example.atsumori.entity.Creatures">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+
+        <collection property="areas" resultMap="AreaResultMap"/>
+        <collection property="appearancePeriods" resultMap="AppearancePeriodResultMap"/>
+        <collection property="appearanceTimes" resultMap="AppearanceTimeResultMap"/>
+    </resultMap>
+
+    <!-- 生き物全件取得 -->
+    <select id="selectAll" resultMap="CreaturesResultMap">
+        SELECT 
+            c.id, c.name, c.price,
+
+            a.id AS area_id,
+            a.name AS area_name,
+
+            ap.id AS period_id,
+            ap.hemisphere,
+            ap.start_month,
+            ap.end_month,
+
+            at.id AS time_id,
+            at.start_time,
+            at.end_time
+
+        FROM creatures c
+        LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+        LEFT JOIN areas a ON ca.area_id = a.id
+
+        LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id
+        LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+        LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+        LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+        ORDER BY c.id
+    </select>
+
+   <!-- 名前で検索 -->
+	<select id="selectByName" parameterType="String" resultMap="CreaturesResultMap">
+  	  SELECT 
+        c.id, c.name, c.price,
+
+        a.id AS area_id,
+        a.name AS area_name,
+
+        ap.id AS period_id,
+        ap.hemisphere,
+        ap.start_month,
+        ap.end_month,
+
+        at.id AS time_id,
+        at.start_time,
+        at.end_time
+
+    FROM creatures c
+    LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+    LEFT JOIN areas a ON ca.area_id = a.id
+
+    LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id
+    LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+    LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+    LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+    WHERE c.name = #{name}
+	</select>
+
+
+    <select id="selectByAppearance" parameterType="map" resultMap="CreaturesResultMap">
+        <![CDATA[
+        SELECT 
+            c.id, c.name, c.price,
+
+            a.id AS area_id,
+            a.name AS area_name,
+
+            ap.id AS period_id,
+            ap.hemisphere,
+            ap.start_month,
+            ap.end_month,
+
+            at.id AS time_id,
+            at.start_time,
+            at.end_time
+
+        FROM creatures c
+        LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+        LEFT JOIN areas a ON ca.area_id = a.id
+
+        LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id      
+        LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+        LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+        LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+        WHERE
+            (ap.hemisphere = #{hemisphere} OR ap.hemisphere IS NULL)
+            AND
+            (
+                (ap.start_month <= ap.end_month AND #{month} BETWEEN ap.start_month AND ap.end_month)
+                OR
+                (ap.start_month > ap.end_month AND (#{month} >= ap.start_month OR #{month} <= ap.end_month))
+            )
+        ORDER BY c.id
+        ]]>
+    </select>
+
+</mapper>
