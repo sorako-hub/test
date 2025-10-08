@@ -1,10 +1,8 @@
 package com.example.atsumori.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class AppearancePeriod {
     private int id;                // 出現期間ID
     private String hemisphere;     // 半球（北半球、南半球、NULL）
