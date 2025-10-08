@@ -1,6 +1,7 @@
 package com.example.atsumori.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,21 +26,9 @@ public class AtsumoriServiceImpl implements AtsumoriService {
     public List<Creatures> findAllCreatures() {
         List<Creatures> creatures = atsumoriMapper.selectAll();
 
-        // 出現期間を北半球・南半球で分割
         for (Creatures c : creatures) {
-            List<AppearancePeriod> northern = new ArrayList<>();
-            List<AppearancePeriod> southern = new ArrayList<>();
-            if (c.getAppearancePeriods() != null) {
-                for (AppearancePeriod p : c.getAppearancePeriods()) {
-                    if ("北半球".equals(p.getHemisphere())) {
-                        northern.add(p);
-                    } else if ("南半球".equals(p.getHemisphere())) {
-                        southern.add(p);
-                    }
-                }
-            }
-            c.setNorthernAppearancePeriods(northern);
-            c.setSouthernAppearancePeriods(southern);
+            c.setNorthernAppearancePeriods(mergePeriods(c.getAppearancePeriods(), "北半球"));
+            c.setSouthernAppearancePeriods(mergePeriods(c.getAppearancePeriods(), "南半球"));
         }
 
         return creatures;
@@ -48,32 +37,13 @@ public class AtsumoriServiceImpl implements AtsumoriService {
     @Override
     public Creatures findByNameCreature(String name) {
         Creatures creature = atsumoriMapper.selectByName(name);
-        if (creature == null) {
-            return null;
-        }
+        if (creature == null) return null;
 
-        List<AppearancePeriod> allPeriods = creature.getAppearancePeriods();
-
-        if (allPeriods == null || allPeriods.isEmpty()) {
-            creature.setNorthernAppearancePeriods(List.of());
-            creature.setSouthernAppearancePeriods(List.of());
-            return creature;
-        }
-
-        List<AppearancePeriod> northern = allPeriods.stream()
-            .filter(p -> "北半球".equals(p.getHemisphere()))
-            .collect(Collectors.toList());
-
-        List<AppearancePeriod> southern = allPeriods.stream()
-            .filter(p -> "南半球".equals(p.getHemisphere()))
-            .collect(Collectors.toList());
-
-        creature.setNorthernAppearancePeriods(northern);
-        creature.setSouthernAppearancePeriods(southern);
+        creature.setNorthernAppearancePeriods(mergePeriods(creature.getAppearancePeriods(), "北半球"));
+        creature.setSouthernAppearancePeriods(mergePeriods(creature.getAppearancePeriods(), "南半球"));
 
         return creature;
     }
-
 
     @Override
     public List<Creatures> findByAppearance(int month, String hemisphere) {
@@ -81,41 +51,67 @@ public class AtsumoriServiceImpl implements AtsumoriService {
             throw new IllegalArgumentException("半球は必ず「北半球」か「南半球」を指定してください");
         }
 
-        // すべての生き物を取得（出現期間も含める）
         List<Creatures> allCreatures = atsumoriMapper.selectAll();
-
         List<Creatures> result = new ArrayList<>();
 
         for (Creatures creature : allCreatures) {
-            List<AppearancePeriod> allPeriods = creature.getAppearancePeriods();
+            List<AppearancePeriod> merged = mergePeriods(creature.getAppearancePeriods(), hemisphere);
 
-            if (allPeriods == null || allPeriods.isEmpty()) {
-                creature.setNorthernAppearancePeriods(List.of());
-                creature.setSouthernAppearancePeriods(List.of());
-                continue;
+            boolean appearsInMonth = merged.stream().anyMatch(p -> p.includesMonth(month));
+            if (appearsInMonth) {
+                creature.setNorthernAppearancePeriods(mergePeriods(creature.getAppearancePeriods(), "北半球"));
+                creature.setSouthernAppearancePeriods(mergePeriods(creature.getAppearancePeriods(), "南半球"));
+                result.add(creature);
             }
+        }
 
-            // 北半球・南半球の出現期間をセット（これは全期間）
-            List<AppearancePeriod> northPeriods = allPeriods.stream()
-                    .filter(p -> "北半球".equals(p.getHemisphere()))
-                    .collect(Collectors.toList());
+        return result;
+    }
 
-            List<AppearancePeriod> southPeriods = allPeriods.stream()
-                    .filter(p -> "南半球".equals(p.getHemisphere()))
-                    .collect(Collectors.toList());
+    /**
+     * 出現期間をマージするメソッド
+     * - 年跨ぎは1つにまとめる
+     * - 通常期間は重複している場合だけ統合
+     */
+    private List<AppearancePeriod> mergePeriods(List<AppearancePeriod> periods, String hemisphere) {
+        if (periods == null) return List.of();
 
-            creature.setNorthernAppearancePeriods(northPeriods);
-            creature.setSouthernAppearancePeriods(southPeriods);
+        List<AppearancePeriod> filtered = periods.stream()
+                .filter(p -> hemisphere.equals(p.getHemisphere()))
+                .collect(Collectors.toList());
+        if (filtered.isEmpty()) return List.of();
 
-            // ✅ 指定された月と半球で出現するかどうかチェック
-            boolean appearsInGivenMonth = allPeriods.stream()
-                    .anyMatch(p -> p.getHemisphere().equals(hemisphere) &&
-                                   p.getStartMonth() <= month &&
-                                   p.getEndMonth() >= month);
+        List<AppearancePeriod> result = new ArrayList<>();
 
-            if (appearsInGivenMonth) {
-                result.add(creature); // 出現する生き物だけをリストに追加
+        // 年跨ぎ期間をまとめる
+        List<AppearancePeriod> yearCrossing = filtered.stream()
+                .filter(p -> p.getStartMonth() > p.getEndMonth())
+                .toList();
+
+        if (!yearCrossing.isEmpty()) {
+            int start = yearCrossing.stream().mapToInt(AppearancePeriod::getStartMonth).min().getAsInt();
+            int end = yearCrossing.stream().mapToInt(AppearancePeriod::getEndMonth).max().getAsInt();
+            result.add(new AppearancePeriod(0, hemisphere, start, end));
+        }
+
+        // 通常期間（年跨ぎでない）
+        List<AppearancePeriod> normal = filtered.stream()
+                .filter(p -> p.getStartMonth() <= p.getEndMonth())
+                .sorted(Comparator.comparing(AppearancePeriod::getStartMonth))
+                .toList();
+
+        int i = 0;
+        while (i < normal.size()) {
+            int start = normal.get(i).getStartMonth();
+            int end = normal.get(i).getEndMonth();
+
+            int j = i + 1;
+            while (j < normal.size() && normal.get(j).getStartMonth() <= end) {
+                end = Math.max(end, normal.get(j).getEndMonth());
+                j++;
             }
+            result.add(new AppearancePeriod(0, hemisphere, start, end));
+            i = j;
         }
 
         return result;
