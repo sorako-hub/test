@@ -51,7 +51,7 @@ public class Creatures {
         if (targetPeriods == null || targetPeriods.isEmpty()) {
             return "なし";
         }
-
+        
         // 月の出現フラグを作成（0:1月〜11:12月）
         boolean[] months = new boolean[12];
         for (AppearancePeriod p : targetPeriods) {

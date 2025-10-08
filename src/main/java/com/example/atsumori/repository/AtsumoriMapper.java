@@ -14,7 +14,7 @@ import com.example.atsumori.entity.Creatures;
 public interface AtsumoriMapper {
     List<Creatures> selectAll();
 
-    Creatures selectByName(@Param("name") String name);
+    Creatures selectByName( String name);
 
     List<Creatures> selectByAppearance(@Param("month") int month, @Param("hemisphere") String hemisphere);
 }
