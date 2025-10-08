@@ -51,50 +51,68 @@ public class Creatures {
         if (targetPeriods == null || targetPeriods.isEmpty()) {
             return "なし";
         }
-        
-        // 月の出現フラグを作成（0:1月〜11:12月）
+
+        // --- 月ごとの出現フラグ ---
         boolean[] months = new boolean[12];
         for (AppearancePeriod p : targetPeriods) {
             int start = p.getStartMonth();
             int end = p.getEndMonth();
             if (start <= end) {
-                for (int m = start; m <= end; m++) {
-                    months[m - 1] = true;
-                }
-            } else { // 年をまたぐ場合
+                for (int m = start; m <= end; m++) months[m - 1] = true;
+            } else { // 年をまたぐ
                 for (int m = start; m <= 12; m++) months[m - 1] = true;
                 for (int m = 1; m <= end; m++) months[m - 1] = true;
             }
         }
 
-        // 連続する期間を抽出
+        // --- 出現が年をまたいで連続しているか確認 ---
+        // 例：11月～3月 のように、12月をまたいで繋がっているか？
+        boolean crossesYear = months[11] && months[0];
+
+        // --- 連続区間を抽出 ---
         StringBuilder sb = new StringBuilder();
         int i = 0;
+        boolean first = true;
+
         while (i < 12) {
             if (months[i]) {
                 int startMonth = i + 1;
                 int j = i;
-                while (months[j % 12]) {
-                    j++;
-                    if (j - i >= 12) break; // 無限ループ防止
+                while (j < 12 && months[j]) j++;
+                int endMonth = j;
+
+                // 年またぎ統合対応
+                if (crossesYear && startMonth == 1) {
+                    // 1月スタートで年またぎの場合、スキップ（後で11月から出力）
+                    i = j;
+                    continue;
                 }
-                int endMonth = (j % 12 == 0) ? 12 : j % 12;
-                boolean crossesYear = startMonth > endMonth;
-                if (sb.length() > 0) sb.append("、");
-                if (crossesYear) {
-                    sb.append(startMonth).append("月〜翌").append(endMonth).append("月");
+
+                if (!first) sb.append("、");
+                if (crossesYear && endMonth == 12) {
+                    sb.append(startMonth).append("月～翌").append(3).append("月");
+                    break;
                 } else {
-                    sb.append(startMonth).append("月〜").append(endMonth).append("月");
+                    sb.append(startMonth).append("月～").append(endMonth).append("月");
                 }
+                first = false;
                 i = j;
             } else {
                 i++;
             }
         }
 
+        // --- もし全体が年またぎ連続なら 11月～3月 のように統一 ---
+        if (crossesYear) {
+            // 最初の false の月（途切れた箇所）を探す
+            int start = 0, end = 11;
+            while (start < 12 && months[start]) start++;
+            while (end >= 0 && months[end]) end--;
+            return (end + 2) + "月～" + (start) + "月"; // 11～3 のように出力
+        }
+
         return sb.toString();
     }
-
     /** 北半球用整形出現期間 */
     public String getFormattedNorthernPeriod() {
         return getFormattedAppearancePeriod("北半球");

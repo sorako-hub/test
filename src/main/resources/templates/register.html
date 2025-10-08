@@ -1,26 +1,108 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>新規登録</title>
+<meta charset="UTF-8">
+<title>新規登録</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Noto Sans JP", "メイリオ", sans-serif;
+        background: url('/images/background.png') no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .register-card {
+        background: #fffde7;
+        border-radius: 20px;
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);
+        width: 90%;
+        max-width: 450px;
+        padding: 35px;
+        text-align: center;
+        animation: fadeIn 1s ease;
+    }
+
+    h1 {
+        color: #2e7d32;
+        font-size: 26px;
+        margin-bottom: 25px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #33691e;
+        text-align: left;
+        margin-left: 10%;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 80%;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #bbb;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    button {
+        background: #6cc24a;
+        color: white;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #57a63e;
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 20px;
+        color: #2e7d32;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(-10px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+</style>
 </head>
 <body>
-<h1>新規ユーザー登録</h1>
+    <div class="register-card">
+        <h1>🌱 新規ユーザー登録</h1>
 
-<form th:action="@{/register}" method="post">
-    <label>Username:</label>
-    <input type="text" name="username" required><br>
+        <form th:action="@{/register}" method="post">
+            <label>ユーザー名：</label>
+            <input type="text" name="username" placeholder="ユーザー名を入力" required>
 
-    <label>Password:</label>
-    <input type="password" name="password" required><br>
+            <label>パスワード：</label>
+            <input type="password" name="password" placeholder="パスワードを入力" required>
 
-    <label>表示名:</label>
-    <input type="text" name="displayname"><br>
+            <label>表示名：</label>
+            <input type="text" name="displayname" placeholder="表示名（任意）">
 
-    <button type="submit">登録</button>
-</form>
+            <button type="submit">登録する</button>
+        </form>
 
-<a th:href="@{/login}">ログイン画面へ戻る</a>
+        <a th:href="@{/login}">← ログイン画面へ戻る</a>
+    </div>
 </body>
 </html>
-tml>

@@ -3,37 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <title>ログイン</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Noto Sans JP", "メイリオ", sans-serif;
+        background: url('/images/background.png') no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .login-card {
+        background: #fffde7;
+        border-radius: 20px;
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);
+        width: 90%;
+        max-width: 400px;
+        padding: 30px;
+        text-align: center;
+        animation: fadeIn 1s ease;
+    }
+
+    h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #33691e;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 80%;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #bbb;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    input[type="submit"] {
+        background: #6cc24a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    input[type="submit"]:hover {
+        background: #57a63e;
+    }
+
+    .message {
+        margin-bottom: 15px;
+        font-weight: bold;
+        border-radius: 10px;
+        padding: 10px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .message.success {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #a5d6a7;
+    }
+
+    .message.error {
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ef9a9a;
+    }
+
+    .message.logout {
+        background: #e3f2fd;
+        color: #1565c0;
+        border: 1px solid #90caf9;
+    }
+
+    a {
+        color: #2e7d32;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(-10px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+</style>
 </head>
 <body>
-	<h2>ログイン画面</h2>
-	<!-- 新規登録完了表示 -->
-	<div th:if="${param.registered}">
-	    <p style="color: green;">登録が完了しました！ログインしてください。</p>
-	</div>
-	<!-- エラー表示 -->
-	<div th:if="${param.error}">
-		<p style="color: red;">usernameまたはpasswordが違います</p>
-	</div>
-	<!-- ログアウト表示 -->
-	<div th:if="${param.logout}">
-		<p style="color: blue">ログアウトしました</p>
-	</div>
-	<form th:action="@{/authentication}" method="post" th:object="${loginForm}">
-		<div><!-- ユーザー名 -->
-		<label for="usernameInput">username</label>
-		<input type="text" th:field="*{usernameInput}">
-	</div>
-	<div><!-- パスワード -->
-		<label for="passwordInput">password</label>
-		<input type="password" th:field="*{passwordInput}">
-	</div>
-	<div>
-		<input type="submit" value="login">
-	</div>
-	</form>
-	<div>
-		<a th:href="@{/register}">新規登録はこちら</a>
-	</div>
-	</form>
+    <div class="login-card">
+        <h2>ログイン画面</h2>
+
+        <!-- メッセージ表示 -->
+        <div th:if="${param.registered}" class="message success">
+            登録が完了しました！ログインしてください。
+        </div>
+        <div th:if="${param.error}" class="message error">
+            ユーザー名またはパスワードが違います。
+        </div>
+        <div th:if="${param.logout}" class="message logout">
+            ログアウトしました。
+        </div>
+
+        <!-- ログインフォーム -->
+        <form th:action="@{/authentication}" method="post" th:object="${loginForm}">
+            <div>
+                <label for="usernameInput">ユーザー名</label>
+                <input type="text" th:field="*{usernameInput}" placeholder="ユーザー名を入力" required>
+            </div>
+            <div>
+                <label for="passwordInput">パスワード</label>
+                <input type="password" th:field="*{passwordInput}" placeholder="パスワードを入力" required>
+            </div>
+            <div>
+                <input type="submit" value="ログイン">
+            </div>
+        </form>
+
+        <p style="margin-top:15px;">
+            <a th:href="@{/register}">🌱 新規登録はこちら</a>
+        </p>
+    </div>
 </body>
 </html>

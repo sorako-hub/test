@@ -1,33 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-<meta charset="UTF-8">
-<title>メニュー</title>
+    <meta charset="UTF-8">
+    <title>メニュー</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Noto Sans JP", "メイリオ", sans-serif;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+        }
+
+        .logo {
+            margin-top: 40px;
+        }
+
+        .card {
+            background: #fffde7;
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin: 40px auto;
+            width: 85%;
+            max-width: 600px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
+        }
+
+        h2 {
+            color: #2e7d32;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background-color: #c8e6c9;
+            width: 80%;
+            margin: 15px auto 25px auto;
+        }
+
+        a {
+            display: inline-block;
+            background: #6cc24a;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            margin: 10px;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        a:hover {
+            background: #57a63e;
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 8px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        form {
+            margin-top: 25px;
+        }
+
+        input[type="submit"] {
+            background: #ef5350;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        input[type="submit"]:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-	<h2>メニュー画面</h2>
-	<hr>
-	<a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori}">
-		生き物一覧へ
-	</a>
-	<br>
-	<a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori}">
-		生き物一覧へ
-	</a>
-	<div sec:authentication="name">
-		ログイン情報のname値に書き換わる
-	</div>
-	<div th:text="${#authentication.principal.displayname}">
-		新たに追加したdisplayname値に置き換わる
-	</div>
-	<div sec:authorize="isAuthenticated()">
-		認証されたユーザーにのみ表示
-	</div>
-	<br>
-	<!-- ログアウト -->
-	<form th:action="@{/logout}" method="post">
-		<input type="submit" value="ログアウト">
-	</form>
+
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="ロゴ" width="400">
+    </div>
+
+    <div class="card">
+        <h2>メニュー画面</h2>
+        <hr>
+
+        <!-- 生き物一覧リンク（権限別） -->
+        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori}">
+            生き物一覧へ
+        </a>
+        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori}">
+            生き物一覧へ
+        </a>
+
+        <!-- 認証情報表示 -->
+        <div class="user-info">
+            <div sec:authentication="name">
+                ログイン中: <span th:text="${#authentication.name}">ユーザー名</span>
+            </div>
+            <div th:text="${#authentication.principal.displayname}">
+                表示名
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                （認証済みユーザー）
+            </div>
+        </div>
+
+        <!-- ログアウトフォーム -->
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="ログアウト">
+        </form>
+    </div>
+
 </body>
 </html>
