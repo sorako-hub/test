@@ -3,7 +3,7 @@
 <mapper namespace="com.example.atsumori.repository.AuthenticationMapper">
 	<!--  ユーザー名で認証情報を取得  -->
 	<select id="selectByUsername" resultType="com.example.atsumori.entity.Authentication">
-	SELECT username, password, authority, displayname
+	SELECT id,username, password, authority, displayname
 	FROM authentications
 	WHERE username = #{username}
 	</select>

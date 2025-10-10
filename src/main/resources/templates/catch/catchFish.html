@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>釣った魚を登録する</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Noto Sans JP", "メイリオ", sans-serif;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+        }
+
+        .logo {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            background: #fffde7;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin: 0 auto 30px auto;
+            width: 85%;
+            max-width: 800px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
+        }
+
+        h1 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+
+        p.description {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        ul.fish-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        ul.fish-list li {
+            background: #f0f9f1;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        ul.fish-list li.selected {
+            border-color: #6cc24a;
+            background: #d8f5db;
+        }
+
+        .register-btn {
+            margin-top: 20px;
+            background: #6cc24a;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .register-btn:hover {
+            background: #57a63e;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="ロゴ" width="320">
+    </div>
+
+    <div class="card">
+        <h1>釣った魚を登録する</h1>
+        <p class="description">登録したい魚の名前をクリックして選択し、「登録」ボタンを押してください。</p>
+
+        <form method="post" action="/catch/fish/register-multiple">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <ul class="fish-list">
+                <li th:each="fish : ${uncaughtFish}" th:classappend="${false}" th:onclick="|toggleSelection(this)|">
+                    <label>
+                        <input type="checkbox" name="fishIds" th:value="${fish.id}" />
+                        <span th:text="${fish.name}"></span>
+                    </label>
+                </li>
+            </ul>
+
+            <button type="submit" class="register-btn">登録</button>
+        </form>
+
+        <a th:href="@{/menu}" class="btn-menu">🌿 メニューにもどる</a>
+    </div>
+
+    <script>
+        function toggleSelection(li) {
+            const checkbox = li.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            li.classList.toggle('selected', checkbox.checked);
+        }
+    </script>
+</body>
+</html>

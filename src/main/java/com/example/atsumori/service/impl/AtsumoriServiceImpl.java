@@ -1,7 +1,9 @@
 package com.example.atsumori.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -21,30 +23,23 @@ public class AtsumoriServiceImpl implements AtsumoriService {
 
     private final AtsumoriMapper atsumoriMapper;
 
+    /**
+     * 生き物全件取得
+     */
     @Override
     public List<Creatures> findAllCreatures() {
         List<Creatures> creatures = atsumoriMapper.selectAll();
 
-        // 出現期間を北半球・南半球で分割
         for (Creatures c : creatures) {
-            List<AppearancePeriod> northern = new ArrayList<>();
-            List<AppearancePeriod> southern = new ArrayList<>();
-            if (c.getAppearancePeriods() != null) {
-                for (AppearancePeriod p : c.getAppearancePeriods()) {
-                    if ("北半球".equals(p.getHemisphere())) {
-                        northern.add(p);
-                    } else if ("南半球".equals(p.getHemisphere())) {
-                        southern.add(p);
-                    }
-                }
-            }
-            c.setNorthernAppearancePeriods(northern);
-            c.setSouthernAppearancePeriods(southern);
+            splitAppearancePeriods(c);
         }
 
         return creatures;
     }
 
+    /**
+     * 名前で生き物検索
+     */
     @Override
     public Creatures findByNameCreature(String name) {
         Creatures creature = atsumoriMapper.selectByName(name);
@@ -52,72 +47,122 @@ public class AtsumoriServiceImpl implements AtsumoriService {
             return null;
         }
 
-        List<AppearancePeriod> allPeriods = creature.getAppearancePeriods();
-
-        if (allPeriods == null || allPeriods.isEmpty()) {
-            creature.setNorthernAppearancePeriods(List.of());
-            creature.setSouthernAppearancePeriods(List.of());
-            return creature;
-        }
-
-        List<AppearancePeriod> northern = allPeriods.stream()
-            .filter(p -> "北半球".equals(p.getHemisphere()))
-            .collect(Collectors.toList());
-
-        List<AppearancePeriod> southern = allPeriods.stream()
-            .filter(p -> "南半球".equals(p.getHemisphere()))
-            .collect(Collectors.toList());
-
-        creature.setNorthernAppearancePeriods(northern);
-        creature.setSouthernAppearancePeriods(southern);
-
+        splitAppearancePeriods(creature);
         return creature;
     }
 
-
+    /**
+     * 月・半球で出現する生き物検索（ログイン不要）
+     */
     @Override
     public List<Creatures> findByAppearance(int month, String hemisphere) {
         if (!"北半球".equals(hemisphere) && !"南半球".equals(hemisphere)) {
             throw new IllegalArgumentException("半球は必ず「北半球」か「南半球」を指定してください");
         }
 
-        // すべての生き物を取得（出現期間も含める）
         List<Creatures> allCreatures = atsumoriMapper.selectAll();
-
         List<Creatures> result = new ArrayList<>();
 
         for (Creatures creature : allCreatures) {
-            List<AppearancePeriod> allPeriods = creature.getAppearancePeriods();
+            splitAppearancePeriods(creature);
 
-            if (allPeriods == null || allPeriods.isEmpty()) {
-                creature.setNorthernAppearancePeriods(List.of());
-                creature.setSouthernAppearancePeriods(List.of());
-                continue;
-            }
+            List<AppearancePeriod> periods = creature.getAppearancePeriods();
+            if (Objects.isNull(periods) || periods.isEmpty()) continue;
 
-            // 北半球・南半球の出現期間をセット（これは全期間）
-            List<AppearancePeriod> northPeriods = allPeriods.stream()
-                    .filter(p -> "北半球".equals(p.getHemisphere()))
-                    .collect(Collectors.toList());
-
-            List<AppearancePeriod> southPeriods = allPeriods.stream()
-                    .filter(p -> "南半球".equals(p.getHemisphere()))
-                    .collect(Collectors.toList());
-
-            creature.setNorthernAppearancePeriods(northPeriods);
-            creature.setSouthernAppearancePeriods(southPeriods);
-
-            // ✅ 指定された月と半球で出現するかどうかチェック
-            boolean appearsInGivenMonth = allPeriods.stream()
-                    .anyMatch(p -> p.getHemisphere().equals(hemisphere) &&
-                                   p.getStartMonth() <= month &&
-                                   p.getEndMonth() >= month);
+            boolean appearsInGivenMonth = periods.stream()
+                .anyMatch(p -> p.getHemisphere().equals(hemisphere) &&
+                    (
+                        (p.getStartMonth() <= p.getEndMonth() && month >= p.getStartMonth() && month <= p.getEndMonth())
+                        ||
+                        (p.getStartMonth() > p.getEndMonth() && (month >= p.getStartMonth() || month <= p.getEndMonth()))
+                    )
+                );
 
             if (appearsInGivenMonth) {
-                result.add(creature); // 出現する生き物だけをリストに追加
+                result.add(creature);
             }
         }
 
         return result;
+    }
+
+    /**
+     * 釣った魚（ログインユーザーごと）
+     */
+    @Override
+    public List<Creatures> findCaughtFishByUserId(Long userId) {
+        List<Creatures> caughtFish = atsumoriMapper.selectCaughtFish(userId);
+
+        for (Creatures c : caughtFish) {
+            splitAppearancePeriods(c);
+        }
+
+        return caughtFish;
+    }
+
+    /**
+     * 釣ってない魚（ログインユーザーごと）
+     */
+    @Override
+    public List<Creatures> findUncaughtFishByUserId(Long userId) {
+        List<Creatures> uncaughtFish = atsumoriMapper.selectUncaughtFish(userId);
+
+        for (Creatures c : uncaughtFish) {
+            splitAppearancePeriods(c);
+        }
+
+        return uncaughtFish;
+    }
+
+    /**
+     * 月・半球で釣った魚（ログインユーザーごと）
+     */
+    @Override
+    public List<Creatures> findCaughtFishByAppearance(Long userId, int month, String hemisphere) {
+        List<Creatures> caughtFish = atsumoriMapper.selectCaughtFishByAppearance(userId, month, hemisphere);
+
+        for (Creatures c : caughtFish) {
+            splitAppearancePeriods(c);
+        }
+
+        return caughtFish;
+    }
+
+    /**
+     * 月・半球でまだ釣っていない魚（ログインユーザーごと）
+     */
+    @Override
+    public List<Creatures> findUncaughtFishByAppearance(Long userId, int month, String hemisphere) {
+        List<Creatures> uncaughtFish = atsumoriMapper.selectUncaughtFishByAppearance(userId, month, hemisphere);
+
+        for (Creatures c : uncaughtFish) {
+            splitAppearancePeriods(c);
+        }
+
+        return uncaughtFish;
+    }
+
+    /**
+     * 出現期間を北半球／南半球に分けてセットする共通処理
+     */
+    private void splitAppearancePeriods(Creatures creature) {
+        if (creature == null || creature.getAppearancePeriods() == null) {
+            creature.setNorthernAppearancePeriods(Collections.emptyList());
+            creature.setSouthernAppearancePeriods(Collections.emptyList());
+            return;
+        }
+
+        List<AppearancePeriod> periods = creature.getAppearancePeriods();
+
+        List<AppearancePeriod> northern = periods.stream()
+            .filter(p -> "北半球".equals(p.getHemisphere()))
+            .collect(Collectors.toList());
+
+        List<AppearancePeriod> southern = periods.stream()
+            .filter(p -> "南半球".equals(p.getHemisphere()))
+            .collect(Collectors.toList());
+
+        creature.setNorthernAppearancePeriods(northern);
+        creature.setSouthernAppearancePeriods(southern);
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.atsumori.repository.CaughtMapper">
+
+    <!-- ユーザーIDで釣った魚一覧を取得 -->
+    <select id="findByUserId" parameterType="long" resultType="com.example.atsumori.entity.CaughtFish">
+        SELECT id, user_id as userId, creature_id as creatureId
+        FROM caught_fish
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- ユーザーIDと魚IDの組み合わせが存在するか -->
+    <select id="existsByUserIdAndCreatureId" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM caught_fish
+        WHERE user_id = #{userId}
+          AND creature_id = #{creatureId}
+    </select>
+
+    <!-- 釣った魚を登録 -->
+    <insert id="insertCaughtFish" parameterType="com.example.atsumori.entity.CaughtFish" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO caught_fish (user_id, creature_id)
+        VALUES (#{userId}, #{creatureId})
+    </insert>
+
+</mapper>

@@ -1,114 +1,122 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>ログイン</title>
-<style>
-    body {
-        margin: 0;
-        font-family: "Noto Sans JP", "メイリオ", sans-serif;
-        background: url('/images/background.png') no-repeat center center fixed;
-        background-size: cover;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+    <meta charset="UTF-8">
+    <title>ログイン</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Noto Sans JP", "メイリオ", sans-serif;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
 
-    .login-card {
-        background: #fffde7;
-        border-radius: 20px;
-        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);
-        width: 90%;
-        max-width: 400px;
-        padding: 30px;
-        text-align: center;
-        animation: fadeIn 1s ease;
-    }
+        .card {
+            background: #fffde7;
+            border-radius: 20px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 30px;
+            animation: fadeIn 1s ease;
+        }
 
-    h2 {
-        color: #2e7d32;
-        margin-bottom: 20px;
-    }
+        h2 {
+            color: #2e7d32;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
 
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #33691e;
-    }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #33691e;
+            text-align: left;
+            padding-left: 10%;
+        }
 
-    input[type="text"],
-    input[type="password"] {
-        width: 80%;
-        padding: 8px;
-        border-radius: 8px;
-        border: 1px solid #bbb;
-        margin-bottom: 15px;
-        font-size: 14px;
-    }
+        input[type="text"],
+        input[type="password"] {
+            width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #bbb;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
 
-    input[type="submit"] {
-        background: #6cc24a;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
+        input[type="submit"] {
+            background: #6cc24a;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.1s;
+        }
 
-    input[type="submit"]:hover {
-        background: #57a63e;
-    }
+        input[type="submit"]:hover {
+            background: #57a63e;
+            transform: translateY(-2px);
+        }
 
-    .message {
-        margin-bottom: 15px;
-        font-weight: bold;
-        border-radius: 10px;
-        padding: 10px;
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-    }
+        .message {
+            margin-bottom: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    .message.success {
-        background: #e8f5e9;
-        color: #2e7d32;
-        border: 1px solid #a5d6a7;
-    }
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
 
-    .message.error {
-        background: #ffebee;
-        color: #c62828;
-        border: 1px solid #ef9a9a;
-    }
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
 
-    .message.logout {
-        background: #e3f2fd;
-        color: #1565c0;
-        border: 1px solid #90caf9;
-    }
+        .message.logout {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
 
-    a {
-        color: #2e7d32;
-        font-weight: bold;
-        text-decoration: none;
-    }
+        a {
+            color: #2e7d32;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+            transition: text-decoration 0.2s;
+        }
 
-    a:hover {
-        text-decoration: underline;
-    }
+        a:hover {
+            text-decoration: underline;
+        }
 
-    @keyframes fadeIn {
-        from {opacity: 0; transform: translateY(-10px);}
-        to {opacity: 1; transform: translateY(0);}
-    }
-</style>
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(-10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+    </style>
 </head>
 <body>
-    <div class="login-card">
+    <div class="card">
         <h2>ログイン画面</h2>
 
         <!-- メッセージ表示 -->
@@ -137,9 +145,7 @@
             </div>
         </form>
 
-        <p style="margin-top:15px;">
-            <a th:href="@{/register}">🌱 新規登録はこちら</a>
-        </p>
+        <a th:href="@{/register}">🌱 新規登録はこちら</a>
     </div>
 </body>
 </html>

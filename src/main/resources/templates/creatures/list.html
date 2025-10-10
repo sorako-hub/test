@@ -14,7 +14,7 @@
 
         .logo {
             margin-top: 10px;
-			margin-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         .card {
@@ -105,6 +105,36 @@
             width: fit-content;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        /* 追加：釣った魚・まだ釣っていない魚ボタンを横並びに */
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .button-group form {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .button-group button {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -113,6 +143,45 @@
     </div>
 
     <div class="card">
+        <!-- 釣った魚・まだ釣っていない魚 横並びボタン＋月・半球での検索フォーム -->
+        <div class="form-box">
+            <h3>釣った魚・まだ釣っていない魚</h3>
+            <div class="button-group">
+                <form th:action="@{/atsumori/caughtFish}" method="get">
+                    <button type="submit">釣った魚一覧を表示</button>
+                </form>
+
+                <form th:action="@{/atsumori/uncaughtFish}" method="get">
+                    <button type="submit">まだ釣っていない魚一覧を表示</button>
+                </form>
+            </div>
+
+            <form th:action="@{/atsumori/caughtFishByMonthAndHemisphere}" method="get" style="margin-bottom: 15px;">
+                <label for="caught-month">月:</label>
+                <input type="number" id="caught-month" name="month" min="1" max="12" required style="width: 60px; margin-left: 5px;">
+                <label for="caught-hemisphere" style="margin-left: 10px;">半球:</label>
+                <select id="caught-hemisphere" name="hemisphere" required style="width: 110px; margin-left: 5px;">
+                    <option value="" disabled selected>選択</option>
+                    <option value="北半球">北半球</option>
+                    <option value="南半球">南半球</option>
+                </select>
+                <button type="submit" style="margin-left: 10px;">釣った魚検索</button>
+            </form>
+
+            <form th:action="@{/atsumori/uncaughtFishByMonthAndHemisphere}" method="get">
+                <label for="uncaught-month">月:</label>
+                <input type="number" id="uncaught-month" name="month" min="1" max="12" required style="width: 60px; margin-left: 5px;">
+                <label for="uncaught-hemisphere" style="margin-left: 10px;">半球:</label>
+                <select id="uncaught-hemisphere" name="hemisphere" required style="width: 110px; margin-left: 5px;">
+                    <option value="" disabled selected>選択</option>
+                    <option value="北半球">北半球</option>
+                    <option value="南半球">南半球</option>
+                </select>
+                <button type="submit" style="margin-left: 10px;">まだ釣っていない魚検索</button>
+            </form>
+        </div>
+
+        <!-- 元々の名前検索・月と半球検索 -->
         <div class="forms">
             <div class="form-box">
                 <h3>名前で検索</h3>
@@ -179,7 +248,6 @@
         </table>
     </div>
 
-    <a th:href="@{/}">メニュー画面へ</a>
+    <a th:href="@{/menu}" class="btn-menu">🌿 メニューにもどる</a>
 </body>
 </html>
-

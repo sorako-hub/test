@@ -22,46 +22,48 @@ import lombok.RequiredArgsConstructor;
  */
 @Service
 @RequiredArgsConstructor
-public class LoginUserDatailsServiceImpl implements UserDetailsService {
-	/** DI */
+public class LoginUserDetailsServiceImpl implements UserDetailsService {
+
 	private final AuthenticationMapper authenticationMapper;
-	
+
 	@Override
-	public UserDetails loadUserByUsername(String username)
-		throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// 「認証テーブル」からデータを取得
 		Authentication authentication = authenticationMapper.selectByUsername(username);
-		
-		// 対象データがあれば、UserDetailsの実装クラスを返す
+
 		if (authentication != null) {
-			// 対象データが存在する
+			// 権限の文字列を列挙型に変換（例: "ADMIN" → Role.ADMIN）
+			Role role;
+			try {
+				role = Role.valueOf(authentication.getAuthority());
+			} catch (IllegalArgumentException | NullPointerException e) {
+				throw new UsernameNotFoundException("無効な権限が指定されています: " + authentication.getAuthority());
+			}
+
 			// UserDetailsの実装クラスを返す
-			return new LoginUser(authentication.getUsername(),
-								 authentication.getPassword(),
-								 getAuthorityList(authentication.getAuthority()),
-								 authentication.getDisplayname()
-								 );
+			return new LoginUser(
+				authentication.getId(),
+				authentication.getUsername(),
+				authentication.getPassword(),
+				getAuthorityList(role),
+				authentication.getDisplayname()
+			);
 		} else {
-			// 対象データが存在しない
-			throw new UsernameNotFoundException(
-					username + " => 指定しているユーザー名は存在しません");
+			throw new UsernameNotFoundException(username + " => 指定しているユーザー名は存在しません");
 		}
 	}
-	
+
 	/**
-	 *  権限情報をリストで取得する
+	 * 権限情報をリストで取得する
 	 */
-	private List<GrantedAuthority> getAuthorityList(Role role){
-		//権限リスト
+	private List<GrantedAuthority> getAuthorityList(Role role) {
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		// 列挙型からロールを取得
 		authorities.add(new SimpleGrantedAuthority(role.name()));
-		// ADMIN ロールの場合、USERの権限も付与
+
+		// ADMIN ロールの場合は USER 権限も付与
 		if (role == Role.ADMIN) {
-			authorities.add(
-					new SimpleGrantedAuthority(Role.USER.toString()));
+			authorities.add(new SimpleGrantedAuthority(Role.USER.name()));
 		}
 		return authorities;
 	}
-
 }

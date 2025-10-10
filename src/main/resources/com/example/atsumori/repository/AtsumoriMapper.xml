@@ -136,5 +136,214 @@
         ORDER BY c.id
         ]]>
     </select>
+    
+    <select id="selectById" parameterType="long" resultMap="CreaturesResultMap">
+  SELECT 
+      c.id, c.name, c.price,
+
+      a.id AS area_id,
+      a.name AS area_name,
+
+      ap.id AS period_id,
+      ap.hemisphere,
+      ap.start_month,
+      ap.end_month,
+
+      at.id AS time_id,
+      at.start_time,
+      at.end_time
+
+  FROM creatures c
+  LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+  LEFT JOIN areas a ON ca.area_id = a.id
+
+  LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id
+  LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+  LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+  LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+  WHERE c.id = #{id}
+</select>
+    
+    
+<select id="findByIdNotIn" parameterType="list" resultMap="CreaturesResultMap">
+  SELECT 
+      c.id, c.name, c.price,
+
+      a.id AS area_id,
+      a.name AS area_name,
+
+      ap.id AS period_id,
+      ap.hemisphere,
+      ap.start_month,
+      ap.end_month,
+
+      at.id AS time_id,
+      at.start_time,
+      at.end_time
+
+  FROM creatures c
+  LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+  LEFT JOIN areas a ON ca.area_id = a.id
+
+  LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id
+  LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+  LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+  LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+  <if test="list != null and list.size() > 0">
+    WHERE c.id NOT IN
+    <foreach item="id" collection="list" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </if>
+</select>
+
+<!-- 釣った魚一覧をユーザーIDで取得 -->
+<select id="selectCaughtFish" parameterType="long" resultMap="CreaturesResultMap">
+  SELECT 
+      c.id, c.name, c.price,
+
+      a.id AS area_id,
+      a.name AS area_name,
+
+      ap.id AS period_id,
+      ap.hemisphere,
+      ap.start_month,
+      ap.end_month,
+
+      at.id AS time_id,
+      at.start_time,
+      at.end_time
+
+  FROM creatures c
+  INNER JOIN caught_fish cf ON c.id = cf.creature_id
+  LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+  LEFT JOIN areas a ON ca.area_id = a.id
+
+  LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id
+  LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+  LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+  LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+  WHERE cf.user_id = #{userId}
+  ORDER BY c.id
+</select>
+
+<!-- まだ釣っていない魚一覧をユーザーIDで取得 -->
+<select id="selectUncaughtFish" parameterType="long" resultMap="CreaturesResultMap">
+  SELECT 
+      c.id, c.name, c.price,
+
+      a.id AS area_id,
+      a.name AS area_name,
+
+      ap.id AS period_id,
+      ap.hemisphere,
+      ap.start_month,
+      ap.end_month,
+
+      at.id AS time_id,
+      at.start_time,
+      at.end_time
+
+  FROM creatures c
+  LEFT JOIN caught_fish cf ON c.id = cf.creature_id AND cf.user_id = #{userId}
+  LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+  LEFT JOIN areas a ON ca.area_id = a.id
+
+  LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id
+  LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+  LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+  LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+  WHERE cf.creature_id IS NULL
+  ORDER BY c.id
+</select>
+
+<!-- 指定月・半球・釣った魚一覧 -->
+<select id="selectCaughtFishByAppearance" parameterType="map" resultMap="CreaturesResultMap">
+  <![CDATA[
+  SELECT 
+      c.id, c.name, c.price,
+
+      a.id AS area_id,
+      a.name AS area_name,
+
+      ap.id AS period_id,
+      ap.hemisphere,
+      ap.start_month,
+      ap.end_month,
+
+      at.id AS time_id,
+      at.start_time,
+      at.end_time
+
+  FROM creatures c
+  INNER JOIN caught_fish cf ON c.id = cf.creature_id
+  LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+  LEFT JOIN areas a ON ca.area_id = a.id
+
+  LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id      
+  LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+  LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+  LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+  WHERE cf.user_id = #{userId}
+    AND (ap.hemisphere = #{hemisphere} OR ap.hemisphere IS NULL)
+    AND (
+      (ap.start_month <= ap.end_month AND #{month} BETWEEN ap.start_month AND ap.end_month)
+      OR
+      (ap.start_month > ap.end_month AND (#{month} >= ap.start_month OR #{month} <= ap.end_month))
+    )
+  ORDER BY c.id
+  ]]>
+</select>
+
+<!-- 指定月・半球・まだ釣っていない魚一覧 -->
+<select id="selectUncaughtFishByAppearance" parameterType="map" resultMap="CreaturesResultMap">
+  <![CDATA[
+  SELECT 
+      c.id, c.name, c.price,
+
+      a.id AS area_id,
+      a.name AS area_name,
+
+      ap.id AS period_id,
+      ap.hemisphere,
+      ap.start_month,
+      ap.end_month,
+
+      at.id AS time_id,
+      at.start_time,
+      at.end_time
+
+  FROM creatures c
+  LEFT JOIN caught_fish cf ON c.id = cf.creature_id AND cf.user_id = #{userId}
+  LEFT JOIN creature_areas ca ON c.id = ca.creature_id
+  LEFT JOIN areas a ON ca.area_id = a.id
+
+  LEFT JOIN creature_appearance_periods cap ON c.id = cap.creature_id      
+  LEFT JOIN appearance_periods ap ON cap.appearance_period_id = ap.id
+
+  LEFT JOIN creature_appearance_times cat ON c.id = cat.creature_id
+  LEFT JOIN appearance_times at ON cat.appearance_time_id = at.id
+
+  WHERE cf.creature_id IS NULL
+    AND (ap.hemisphere = #{hemisphere} OR ap.hemisphere IS NULL)
+    AND (
+      (ap.start_month <= ap.end_month AND #{month} BETWEEN ap.start_month AND ap.end_month)
+      OR
+      (ap.start_month > ap.end_month AND (#{month} >= ap.start_month OR #{month} <= ap.end_month))
+    )
+  ORDER BY c.id
+  ]]>
+</select>
+
 
 </mapper>

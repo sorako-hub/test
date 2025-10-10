@@ -4,16 +4,24 @@
 <meta charset="UTF-8">
 <title>新規登録</title>
 <style>
-    body {
-        margin: 0;
-        font-family: "Noto Sans JP", "メイリオ", sans-serif;
-        background: url('/images/background.png') no-repeat center center fixed;
-        background-size: cover;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+	body {
+	    margin: 0;
+	    font-family: "Noto Sans JP", "メイリオ", sans-serif;
+	    background-image: url("/images/background.png");
+	    background-repeat: no-repeat;
+	    background-position: center center;
+	    background-size: cover;
+	    /* ↓ これを scroll に変更（fixed禁止） */
+	    background-attachment: scroll;
+
+	    /* そのままFlexboxでもOK */
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    height: 100vh;
+	}
+
+
 
     .register-card {
         background: #fffde7;

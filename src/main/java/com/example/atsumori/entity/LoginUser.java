@@ -5,27 +5,25 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-/**
- * ユーザーの認証情報を表すUserDetails実装クラス
- */
 public class LoginUser extends User {
-	
-	//【追加部分】追加のフィールド
-	private String displayname;
-	
-	/** 最低限の情報を保持したUserDetails
-	 *  実装クラスUserを作成する */
-	public LoginUser(String username,
-			String password,
-			Collection<? extends GrantedAuthority> authorities,
-			String displayname) { // 【追加部分】displaynameを追加
-		super(username, password, authorities);
-		this.displayname = displayname;
-	}
-	
-	//【追加部分】displaynameのgetter
-	public String getDisplayname() {
-		return displayname;
-	}
-	
+
+    private Long id; // ★ 追加
+    private String displayname;
+
+    public LoginUser(Long id, String username, String password,
+                     Collection<? extends GrantedAuthority> authorities,
+                     String displayname) {
+        super(username, password, authorities);
+        this.id = id;
+        this.displayname = displayname;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getDisplayname() {
+        return displayname;
+    }
 }
+
