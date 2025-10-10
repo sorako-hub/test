@@ -4,24 +4,27 @@
 <meta charset="UTF-8">
 <title>新規登録</title>
 <style>
-	body {
-	    margin: 0;
-	    font-family: "Noto Sans JP", "メイリオ", sans-serif;
-	    background-image: url("/images/background.png");
-	    background-repeat: no-repeat;
-	    background-position: center center;
-	    background-size: cover;
-	    /* ↓ これを scroll に変更（fixed禁止） */
-	    background-attachment: scroll;
+    body {
+        margin: 0;
+        font-family: "Noto Sans JP", "メイリオ", sans-serif;
+        background-image: url("/images/background.png");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: scroll;
 
-	    /* そのままFlexboxでもOK */
-	    display: flex;
-	    justify-content: center;
-	    align-items: center;
-	    height: 100vh;
-	}
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        gap: 30px; /* ロゴとカードの間の余白 */
+        text-align: center;
+    }
 
-
+    .logo img {
+        width: 320px;
+    }
 
     .register-card {
         background: #fffde7;
@@ -94,6 +97,10 @@
 </style>
 </head>
 <body>
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="ロゴ">
+    </div>
+
     <div class="register-card">
         <h1>🌱 新規ユーザー登録</h1>
 

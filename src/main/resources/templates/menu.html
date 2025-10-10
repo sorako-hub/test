@@ -101,21 +101,13 @@
         <h2>メニュー画面</h2>
         <hr>
 
-        <!-- 生き物一覧リンク（権限別） -->
+        <!-- 魚図鑑リンク（権限別） -->
         <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori}">
-            生き物一覧へ
+            魚図鑑へ
         </a>
         <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori}">
-            生き物一覧へ
+            魚図鑑へ
         </a>
-		
-		 <!-- 生き物一覧リンク（権限別） -->
-		 <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/catch/fish}">
-			 釣った魚を登録
-		 </a>
-		 <a sec:authorize="hasAuthority('USER')" th:href="@{/catch/fish}">
-		     釣った魚を登録
-		 </a>
 
         <!-- 認証情報表示 -->
         <div class="user-info">
@@ -138,3 +130,4 @@
 
 </body>
 </html>
+
