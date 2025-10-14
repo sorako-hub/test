@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,20 +24,39 @@ public class CatchController {
 
     private final CatchService catchService;
 
-    // 釣った魚登録の画面表示
+    // 魚の画面表示
     @GetMapping("/fish")
     public String showCatchFishPage(@AuthenticationPrincipal LoginUser user, Model model) {
-        System.out.println("ログインユーザーID: " + user.getId());
-        List<Creatures> uncaughtFish = catchService.getUncaughtFish(user);
-        model.addAttribute("uncaughtFish", uncaughtFish);
-        return "catch/catchFish"; // ← catchFish.html に飛ばす
+        List<Creatures> uncaughtFish = catchService.getUncaughtCreaturesByType(user, "fish");
+        model.addAttribute("uncaughtCreatures", uncaughtFish);
+        model.addAttribute("type", "魚");
+        return "catch/catchCreatures"; // 共通のHTMLにするならcatchCreatures.htmlなど
     }
 
-    // 複数の魚を登録する処理
-    @PostMapping("/fish/register-multiple")
-    public String registerMultipleCaughtFish(@RequestParam("fishIds") List<Long> fishIds,
-                                             @AuthenticationPrincipal LoginUser user) {
-        catchService.registerMultipleFish(user, fishIds);
-        return "redirect:/catch/fish";
+    // 虫の画面表示
+    @GetMapping("/bug")
+    public String showCatchBugPage(@AuthenticationPrincipal LoginUser user, Model model) {
+        List<Creatures> uncaughtBugs = catchService.getUncaughtCreaturesByType(user, "bug");
+        model.addAttribute("uncaughtCreatures", uncaughtBugs);
+        model.addAttribute("type", "虫");
+        return "catch/catchCreatures";
+    }
+
+    // 海の幸の画面表示
+    @GetMapping("/seafood")
+    public String showCatchSeafoodPage(@AuthenticationPrincipal LoginUser user, Model model) {
+        List<Creatures> uncaughtSeafood = catchService.getUncaughtCreaturesByType(user, "seafood");
+        model.addAttribute("uncaughtCreatures", uncaughtSeafood);
+        model.addAttribute("type", "海の幸");
+        return "catch/catchCreatures";
+    }
+
+    // 複数登録（魚・虫・海の幸共通）
+    @PostMapping("/{type}/register-multiple")
+    public String registerMultipleCaughtCreatures(@RequestParam("creatureIds") List<Long> creatureIds,
+                                                  @AuthenticationPrincipal LoginUser user,
+                                                  @PathVariable String type) {
+        catchService.registerMultipleCreatures(user, creatureIds, type);
+        return "redirect:/catch/" + type;
     }
 }

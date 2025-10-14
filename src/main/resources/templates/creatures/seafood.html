@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>海の幸一覧</title>
+    <style>
+        /* fish.htmlのスタイルをそのままコピー */
+        /* ====== 全体 ====== */
+        body {
+            margin: 0;
+            font-family: 'Noto Sans JP', 'メイリオ', sans-serif;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #2e7d32;
+            text-align: center;
+        }
+
+        /* ====== ロゴ ====== */
+        .logo {
+            margin: 20px 0 10px 0;
+        }
+
+        /* ====== メインカード ====== */
+        .card {
+            max-width: 1000px;
+            margin: 25px auto 60px auto;
+            background: #fffde7;
+            border-radius: 20px;
+            padding: 35px 45px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ====== 汎用ボタン ====== */
+        button,
+        .register-button {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #6cc24a;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+        }
+        button:hover,
+        .register-button:hover {
+            background-color: #4b9a3d;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ====== セクション共通 ====== */
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            border-bottom: 2px solid #a5d6a7;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* ====== ボタン配置 ====== */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .button-group form {
+            flex: 1 1 250px;
+        }
+
+        /* ====== 検索フォーム ====== */
+        .search-forms {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .form-box {
+            background: #f0f9f1;
+            border-radius: 20px;
+            padding: 20px 25px;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.06);
+            text-align: left;
+        }
+        .form-box h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #2e7d32;
+            text-align: center;
+        }
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        label {
+            min-width: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            flex-grow: 1;
+            padding: 10px 12px;
+            border-radius: 15px;
+            border: 1.5px solid #89c47c;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #5a9b33;
+            box-shadow: 0 0 8px #5a9b33aa;
+        }
+        .form-box button {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background-color: #6cc24a;
+            color: white;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .form-box button:hover {
+            background-color: #4b9a3d;
+        }
+
+        /* ====== メッセージ ====== */
+        .search-message {
+            font-weight: 700;
+            font-size: 22px;
+            margin: 20px auto;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 12px 18px;
+            border-radius: 18px;
+            width: fit-content;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .error {
+            color: #c63939;
+            font-weight: 700;
+            font-size: 18px;
+            margin: 20px auto;
+        }
+
+        /* ====== テーブル ====== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            background-color: #fffde7;
+        }
+        th {
+            background: #c2d6a9;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+        tbody tr:nth-child(even) td {
+            background-color: #f7f9f2;
+        }
+
+        /* ====== メニューに戻る ====== */
+        .btn-menu {
+            display: inline-block;
+            margin: 40px auto 60px auto;
+            padding: 12px 25px;
+            background-color: #6cc24a;
+            color: white;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(108,194,74,0.6);
+            transition: all 0.3s ease;
+        }
+        .btn-menu:hover {
+            background-color: #4b9a3d;
+            box-shadow: 0 8px 25px rgba(75,154,61,0.7);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">
+        <img th:src="@{/images/logo.png}" alt="ロゴ" width="320" />
+    </div>
+
+    <div class="card">
+
+        <!-- ====== 海の幸一覧を表示 ====== -->
+        <div class="section">
+            <h2>🦀 海の幸一覧を表示</h2>
+            <div class="button-group">
+                <form th:action="@{/atsumori/seafood}" method="get">
+                    <button type="submit">海の幸全種類を表示</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ====== 名前・月検索 ====== -->
+        <div class="section">
+            <h2>🔍 海の幸情報を検索</h2>
+            <div class="search-forms">
+                <div class="form-box">
+                    <h3>名前で検索</h3>
+                    <form th:action="@{/atsumori/seafood/searchByName}" method="get">
+                        <input type="text" name="name" placeholder="名前を入力" required />
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+
+                <div class="form-box">
+                    <h3>月と半球で検索</h3>
+                    <form th:action="@{/atsumori/seafood/search}" method="get">
+                        <div class="form-row">
+                            <label for="month">月:</label>
+                            <input type="number" id="month" name="month" min="1" max="12" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="hemisphere">半球:</label>
+                            <select id="hemisphere" name="hemisphere" required>
+                                <option value="" disabled selected>選択してください</option>
+                                <option value="北半球">北半球</option>
+                                <option value="南半球">南半球</option>
+                            </select>
+                        </div>
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 捕った海の幸を登録する ====== -->
+        <div class="section">
+            <h2>🦞 捕った海の幸を登録する</h2>
+            <div class="button-group">
+                <button class="register-button" th:onclick="|location.href='@{/catch/seafood}'|">
+                    捕った海の幸を登録する
+                </button>
+            </div>
+        </div>
+
+        <!-- ====== 捕った・未捕り海の幸一覧 ====== -->
+        <div class="section">
+            <h2>📜 海の幸の状態別一覧</h2>
+            <div class="button-group">
+                <form th:action="@{/atsumori/seafood/caught}" method="get">
+                    <button type="submit">捕った海の幸一覧を表示</button>
+                </form>
+                <form th:action="@{/atsumori/seafood/uncaught}" method="get">
+                    <button type="submit">まだ捕っていない海の幸一覧を表示</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ====== 月と半球で状態別検索 ====== -->
+        <div class="section">
+            <h2>📅 状態別の月と半球で検索</h2>
+            <div class="search-forms">
+                <div class="form-box">
+                    <h3>捕った海の幸検索</h3>
+                    <form th:action="@{/atsumori/seafood/caughtByMonthAndHemisphere}" method="get">
+                        <div class="form-row">
+                            <label for="caught-month">月:</label>
+                            <input type="number" id="caught-month" name="month" min="1" max="12" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="caught-hemisphere">半球:</label>
+                            <select id="caught-hemisphere" name="hemisphere" required>
+                                <option value="" disabled selected>選択</option>
+                                <option value="北半球">北半球</option>
+                                <option value="南半球">南半球</option>
+                            </select>
+                        </div>
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+
+                <div class="form-box">
+                    <h3>まだ捕っていない海の幸検索</h3>
+                    <form th:action="@{/atsumori/seafood/uncaughtByMonthAndHemisphere}" method="get">
+                        <div class="form-row">
+                            <label for="uncaught-month">月:</label>
+                            <input type="number" id="uncaught-month" name="month" min="1" max="12" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="uncaught-hemisphere">半球:</label>
+                            <select id="uncaught-hemisphere" name="hemisphere" required>
+                                <option value="" disabled selected>選択</option>
+                                <option value="北半球">北半球</option>
+                                <option value="南半球">南半球</option>
+                            </select>
+                        </div>
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <p th:if="${searchMessage}" th:text="${searchMessage}" class="search-message"></p>
+        <p th:if="${errorMessage}" th:text="${errorMessage}" class="error"></p>
+
+        <!-- ====== 海の幸データ表示テーブル ====== -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>生き物名</th>
+                    <th>出現期間</th>
+                    <th>出現場所</th>
+                    <th>出現時間帯</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="creature : ${creatures}">
+                    <td th:text="${creature.id}">ID</td>
+                    <td th:text="${creature.name}">名前</td>
+                    <td>
+                        <b>北半球:</b>
+                        <span th:text="${creature.getFormattedAppearancePeriod('北半球')}">11月〜3月</span><br/>
+                        <b>南半球:</b>
+                        <span th:text="${creature.getFormattedAppearancePeriod('南半球')}">5月〜9月</span>
+                    </td>
+                    <td>
+                        <span th:each="area, iterStat : ${creature.areas}">
+                            <span th:text="${area.name}"></span><span th:if="${!iterStat.last}">, </span>
+                        </span>
+                    </td>
+                    <td>
+                        <span th:each="time, iterStat : ${creature.appearanceTimes}">
+                            <span th:text="${time.startTime.toString() + '〜' + time.endTime.toString()}"></span><span th:if="${!iterStat.last}">, </span>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a th:href="@{/menu}" class="btn-menu">🌿 メニューにもどる</a>
+</body>
+</html>

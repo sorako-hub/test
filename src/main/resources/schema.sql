@@ -1,4 +1,4 @@
--- 依存関係の順にテーブル削除（存在すれば削除）
+-- ====== 依存関係の順にテーブル削除（存在すれば削除） ======
 DROP TABLE IF EXISTS creature_appearance_times;
 DROP TABLE IF EXISTS creature_appearance_periods;
 DROP TABLE IF EXISTS creature_areas;
@@ -9,13 +9,13 @@ DROP TABLE IF EXISTS creatures;
 --DROP TABLE IF EXISTS authentications;
 --DROP TYPE IF EXISTS role;
 
---出現場所
+-- ====== 出現場所 ======
 CREATE TABLE areas (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE
 );
 
--- 出現期間
+-- ====== 出現期間 ======
 CREATE TABLE appearance_periods (
     id SERIAL PRIMARY KEY,
     hemisphere VARCHAR(20) NOT NULL,
@@ -24,14 +24,15 @@ CREATE TABLE appearance_periods (
     CONSTRAINT uq_appearance_period UNIQUE (hemisphere, start_month, end_month)
 );
 
--- 生き物
+-- ====== 生き物 ======
 CREATE TABLE creatures (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
-    price INT NOT NULL
+    price INT NOT NULL,
+    type VARCHAR(50) NOT NULL  -- 魚・虫・海の幸を区別
 );
 
--- 生き物 × 出現場所
+-- ====== 生き物 × 出現場所 ======
 CREATE TABLE creature_areas (
     id SERIAL PRIMARY KEY,
     creature_id INT NOT NULL,
@@ -41,7 +42,7 @@ CREATE TABLE creature_areas (
     FOREIGN KEY (area_id) REFERENCES areas(id)
 );
 
--- 生き物 × 出現期間
+-- ====== 生き物 × 出現期間 ======
 CREATE TABLE creature_appearance_periods (
     id SERIAL PRIMARY KEY,
     creature_id INT NOT NULL,
@@ -51,14 +52,14 @@ CREATE TABLE creature_appearance_periods (
     FOREIGN KEY (appearance_period_id) REFERENCES appearance_periods(id)
 );
 
--- 出現時間
+-- ====== 出現時間 ======
 CREATE TABLE appearance_times (
     id SERIAL PRIMARY KEY,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL
 );
 
--- 生き物 × 出現時間
+-- ====== 生き物 × 出現時間 ======
 CREATE TABLE creature_appearance_times (
     id SERIAL PRIMARY KEY,
     creature_id INT NOT NULL,

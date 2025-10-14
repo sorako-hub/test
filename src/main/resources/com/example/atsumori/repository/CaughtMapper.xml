@@ -5,25 +5,35 @@
 
 <mapper namespace="com.example.atsumori.repository.CaughtMapper">
 
-    <!-- ユーザーIDで釣った魚一覧を取得 -->
-    <select id="findByUserId" parameterType="long" resultType="com.example.atsumori.entity.CaughtFish">
-        SELECT id, user_id as userId, creature_id as creatureId
-        FROM caught_fish
+    <!-- ユーザーIDとタイプで捕った生物ID一覧を取得 -->
+    <select id="findCreatureIdsByUserIdAndType"
+            parameterType="map"
+            resultType="long">
+        SELECT creature_id
+        FROM caught_creatures
         WHERE user_id = #{userId}
+          AND type = #{type}
     </select>
 
-    <!-- ユーザーIDと魚IDの組み合わせが存在するか -->
-    <select id="existsByUserIdAndCreatureId" parameterType="map" resultType="boolean">
+    <!-- ユーザーID・生物ID・タイプの組み合わせが存在するか -->
+    <select id="existsByUserIdAndCreatureIdAndType"
+            parameterType="map"
+            resultType="boolean">
         SELECT COUNT(*) > 0
-        FROM caught_fish
+        FROM caught_creatures
         WHERE user_id = #{userId}
           AND creature_id = #{creatureId}
+          AND type = #{type}
     </select>
 
-    <!-- 釣った魚を登録 -->
-    <insert id="insertCaughtFish" parameterType="com.example.atsumori.entity.CaughtFish" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO caught_fish (user_id, creature_id)
-        VALUES (#{userId}, #{creatureId})
-    </insert>
+    <!-- 捕った生物を登録（自動採番ID取得） -->
+    <insert id="insertCaughtCreature"
+        parameterType="com.example.atsumori.entity.CaughtCreature"
+        useGeneratedKeys="true"
+        keyProperty="id">
+    INSERT INTO caught_creatures (user_id, creature_id, type)
+    VALUES (#{userId}, #{creatureId}, #{type})
+	</insert>
+
 
 </mapper>

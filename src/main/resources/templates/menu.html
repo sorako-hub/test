@@ -102,12 +102,16 @@
         <hr>
 
         <!-- 魚図鑑リンク（権限別） -->
-        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori}">
-            魚図鑑へ
-        </a>
-        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori}">
-            魚図鑑へ
-        </a>
+        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori/fish}">魚図鑑へ</a>
+        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori/fish}">魚図鑑へ</a>
+
+        <!-- 🐞 虫図鑑リンク -->
+        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori/insect}">虫図鑑へ</a>
+        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori/insect}">虫図鑑へ</a>
+
+        <!-- 🐚 海の幸図鑑リンク -->
+        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori/seafood}">海の幸図鑑へ</a>
+        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori/seafood}">海の幸図鑑へ</a>
 
         <!-- 認証情報表示 -->
         <div class="user-info">
@@ -130,4 +134,3 @@
 
 </body>
 </html>
-

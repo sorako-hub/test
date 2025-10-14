@@ -130,14 +130,14 @@
         <form method="post" action="/catch/fish/register-multiple">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <ul class="fish-list">
-                <li th:each="fish : ${uncaughtFish}">
-                    <label>
-                        <input type="checkbox" name="fishIds" th:value="${fish.id}">
-                        <span th:text="${fish.name}"></span>
-                    </label>
-                </li>
-            </ul>
+			<ul class="creature-list">
+			    <li th:each="creature : ${uncaughtCreatures}">
+			        <label>
+			            <input type="checkbox" name="creatureIds" th:value="${creature.id}">
+			            <span th:text="${creature.name}"></span>
+			        </label>
+			    </li>
+			</ul>
 
             <button type="submit" class="register-btn">登録</button>
         </form>
@@ -146,8 +146,8 @@
     <!-- 下部リンクボタン -->
     <div class="btn-container">
         <!-- 魚図鑑リンク（権限別） -->
-        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori}" class="btn-link">🐟 魚図鑑へ</a>
-        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori}" class="btn-link">🐟 魚図鑑へ</a>
+        <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori/{type}}" class="btn-link">🐟 魚図鑑へ</a>
+        <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori/{type}}" class="btn-link">🐟 魚図鑑へ</a>
 
         <!-- メニューへ戻る -->
         <a th:href="@{/menu}" class="btn-link">🌿 メニューにもどる</a>
