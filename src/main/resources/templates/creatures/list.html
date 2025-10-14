@@ -12,8 +12,6 @@
             background-size: cover;
             color: #2e7d32;
             text-align: center;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         /* ====== ロゴ ====== */
@@ -31,18 +29,8 @@
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
         }
 
-        /* ====== ボタン群 ====== */
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
-        .button-group form {
-            flex: 1 1 200px;
-        }
-        .button-group button,
+        /* ====== 汎用ボタン ====== */
+        button,
         .register-button {
             width: 100%;
             padding: 12px 0;
@@ -54,24 +42,36 @@
             cursor: pointer;
             transition: all 0.3s ease;
             background-color: #6cc24a;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
         }
-        .button-group button:hover,
+        button:hover,
         .register-button:hover {
             background-color: #4b9a3d;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* ====== 釣った魚登録ボタン ====== */
-        .register-container {
+        /* ====== セクション共通 ====== */
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            border-bottom: 2px solid #a5d6a7;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* ====== ボタン配置 ====== */
+        .button-group {
             display: flex;
             justify-content: center;
-            margin: 25px 0 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        .register-button {
-            max-width: 260px;
-            background-color: #6cc24a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        .button-group form {
+            flex: 1 1 250px;
         }
 
         /* ====== 検索フォーム ====== */
@@ -79,13 +79,12 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 30px;
-            margin-bottom: 10px;
         }
         .form-box {
             background: #f0f9f1;
             border-radius: 20px;
             padding: 20px 25px;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.06);
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.06);
             text-align: left;
         }
         .form-box h3 {
@@ -103,7 +102,7 @@
             gap: 10px;
         }
         label {
-            min-width: 50px;
+            min-width: 60px;
             font-weight: 600;
             font-size: 1rem;
         }
@@ -134,11 +133,9 @@
             transition: all 0.3s ease;
             width: 100%;
             margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
         .form-box button:hover {
             background-color: #4b9a3d;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
 
         /* ====== メッセージ ====== */
@@ -211,97 +208,121 @@
     </div>
 
     <div class="card">
-        <!-- ====== ボタン群 ====== -->
-        <div class="button-group">
-            <form th:action="@{/atsumori/caughtFish}" method="get">
-                <button type="submit">釣った魚一覧を表示</button>
-            </form>
-            <form th:action="@{/atsumori/uncaughtFish}" method="get">
-                <button type="submit">まだ釣っていない魚一覧を表示</button>
-            </form>
-        </div>
 
-        <!-- ====== 登録ボタン ====== -->
-        <div class="register-container">
-            <button class="register-button" th:onclick="|location.href='@{/catch/fish}'|">
-                🎣 釣った魚を登録する
-            </button>
-        </div>
-
-        <!-- ====== 検索フォーム ====== -->
-        <div class="search-forms">
-            <div class="form-box">
-                <h3>釣った魚検索</h3>
-                <form th:action="@{/atsumori/caughtFishByMonthAndHemisphere}" method="get">
-                    <div class="form-row">
-                        <label for="caught-month">月:</label>
-                        <input type="number" id="caught-month" name="month" min="1" max="12" required />
-                    </div>
-                    <div class="form-row">
-                        <label for="caught-hemisphere">半球:</label>
-                        <select id="caught-hemisphere" name="hemisphere" required>
-                            <option value="" disabled selected>選択</option>
-                            <option value="北半球">北半球</option>
-                            <option value="南半球">南半球</option>
-                        </select>
-                    </div>
-                    <button type="submit">検索</button>
-                </form>
-            </div>
-
-            <div class="form-box">
-                <h3>まだ釣っていない魚検索</h3>
-                <form th:action="@{/atsumori/uncaughtFishByMonthAndHemisphere}" method="get">
-                    <div class="form-row">
-                        <label for="uncaught-month">月:</label>
-                        <input type="number" id="uncaught-month" name="month" min="1" max="12" required />
-                    </div>
-                    <div class="form-row">
-                        <label for="uncaught-hemisphere">半球:</label>
-                        <select id="uncaught-hemisphere" name="hemisphere" required>
-                            <option value="" disabled selected>選択</option>
-                            <option value="北半球">北半球</option>
-                            <option value="南半球">南半球</option>
-                        </select>
-                    </div>
-                    <button type="submit">検索</button>
+        <!-- ====== 魚一覧を表示 ====== -->
+        <div class="section">
+            <h2>🐟 魚一覧を表示</h2>
+            <div class="button-group">
+                <form th:action="@{/atsumori}" method="get">
+                    <button type="submit">魚全種類を表示</button>
                 </form>
             </div>
         </div>
 
         <!-- ====== 名前・月検索 ====== -->
-        <div class="search-forms" style="margin-top: 25px;">
-            <div class="form-box">
-                <h3>名前で検索</h3>
-                <form th:action="@{/atsumori/searchByName}" method="get">
-                    <input type="text" name="name" placeholder="名前を入力" required />
-                    <button type="submit">検索</button>
+        <div class="section">
+            <h2>🔍 魚情報を検索</h2>
+            <div class="search-forms">
+                <div class="form-box">
+                    <h3>名前で検索</h3>
+                    <form th:action="@{/atsumori/searchByName}" method="get">
+                        <input type="text" name="name" placeholder="名前を入力" required />
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+
+                <div class="form-box">
+                    <h3>月と半球で検索</h3>
+                    <form th:action="@{/atsumori/search}" method="get">
+                        <div class="form-row">
+                            <label for="month">月:</label>
+                            <input type="number" id="month" name="month" min="1" max="12" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="hemisphere">半球:</label>
+                            <select id="hemisphere" name="hemisphere" required>
+                                <option value="" disabled selected>選択してください</option>
+                                <option value="北半球">北半球</option>
+                                <option value="南半球">南半球</option>
+                            </select>
+                        </div>
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 釣った魚を登録する ====== -->
+        <div class="section">
+            <h2>🎣 釣った魚を登録する</h2>
+            <div class="button-group">
+                <button class="register-button" th:onclick="|location.href='@{/catch/fish}'|">
+                    釣った魚を登録する
+                </button>
+            </div>
+        </div>
+
+        <!-- ====== 釣った・未釣り魚一覧 ====== -->
+        <div class="section">
+            <h2>📜 魚の状態別一覧</h2>
+            <div class="button-group">
+                <form th:action="@{/atsumori/caughtFish}" method="get">
+                    <button type="submit">釣った魚一覧を表示</button>
+                </form>
+                <form th:action="@{/atsumori/uncaughtFish}" method="get">
+                    <button type="submit">まだ釣っていない魚一覧を表示</button>
                 </form>
             </div>
+        </div>
 
-            <div class="form-box">
-                <h3>月と半球で検索</h3>
-                <form th:action="@{/atsumori/search}" method="get">
-                    <div class="form-row">
-                        <label for="month">月:</label>
-                        <input type="number" id="month" name="month" min="1" max="12" required />
-                    </div>
-                    <div class="form-row">
-                        <label for="hemisphere">半球:</label>
-                        <select id="hemisphere" name="hemisphere" required>
-                            <option value="" disabled selected>選択してください</option>
-                            <option value="北半球">北半球</option>
-                            <option value="南半球">南半球</option>
-                        </select>
-                    </div>
-                    <button type="submit">検索</button>
-                </form>
+        <!-- ====== 月と半球で状態別検索 ====== -->
+        <div class="section">
+            <h2>📅 状態別の月と半球で検索</h2>
+            <div class="search-forms">
+                <div class="form-box">
+                    <h3>釣った魚検索</h3>
+                    <form th:action="@{/atsumori/caughtFishByMonthAndHemisphere}" method="get">
+                        <div class="form-row">
+                            <label for="caught-month">月:</label>
+                            <input type="number" id="caught-month" name="month" min="1" max="12" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="caught-hemisphere">半球:</label>
+                            <select id="caught-hemisphere" name="hemisphere" required>
+                                <option value="" disabled selected>選択</option>
+                                <option value="北半球">北半球</option>
+                                <option value="南半球">南半球</option>
+                            </select>
+                        </div>
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
+
+                <div class="form-box">
+                    <h3>まだ釣っていない魚検索</h3>
+                    <form th:action="@{/atsumori/uncaughtFishByMonthAndHemisphere}" method="get">
+                        <div class="form-row">
+                            <label for="uncaught-month">月:</label>
+                            <input type="number" id="uncaught-month" name="month" min="1" max="12" required />
+                        </div>
+                        <div class="form-row">
+                            <label for="uncaught-hemisphere">半球:</label>
+                            <select id="uncaught-hemisphere" name="hemisphere" required>
+                                <option value="" disabled selected>選択</option>
+                                <option value="北半球">北半球</option>
+                                <option value="南半球">南半球</option>
+                            </select>
+                        </div>
+                        <button type="submit">検索</button>
+                    </form>
+                </div>
             </div>
         </div>
 
         <p th:if="${searchMessage}" th:text="${searchMessage}" class="search-message"></p>
         <p th:if="${errorMessage}" th:text="${errorMessage}" class="error"></p>
 
+        <!-- ====== 魚データ表示テーブル ====== -->
         <table>
             <thead>
                 <tr>
