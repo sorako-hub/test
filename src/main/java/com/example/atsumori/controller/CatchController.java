@@ -30,16 +30,16 @@ public class CatchController {
         List<Creatures> uncaughtFish = catchService.getUncaughtCreaturesByType(user, "fish");
         model.addAttribute("uncaughtCreatures", uncaughtFish);
         model.addAttribute("type", "魚");
-        return "catch/catchCreatures"; // 共通のHTMLにするならcatchCreatures.htmlなど
+        return "catch/catchFish"; // 共通のHTMLにするならcatchCreatures.htmlなど
     }
 
     // 虫の画面表示
-    @GetMapping("/bug")
-    public String showCatchBugPage(@AuthenticationPrincipal LoginUser user, Model model) {
-        List<Creatures> uncaughtBugs = catchService.getUncaughtCreaturesByType(user, "bug");
-        model.addAttribute("uncaughtCreatures", uncaughtBugs);
+    @GetMapping("/insect")
+    public String showCatchInsectPage(@AuthenticationPrincipal LoginUser user, Model model) {
+        List<Creatures> uncaughtInsect = catchService.getUncaughtCreaturesByType(user, "insect");
+        model.addAttribute("uncaughtCreatures", uncaughtInsect);
         model.addAttribute("type", "虫");
-        return "catch/catchCreatures";
+        return "catch/catchInsect";
     }
 
     // 海の幸の画面表示
@@ -48,8 +48,9 @@ public class CatchController {
         List<Creatures> uncaughtSeafood = catchService.getUncaughtCreaturesByType(user, "seafood");
         model.addAttribute("uncaughtCreatures", uncaughtSeafood);
         model.addAttribute("type", "海の幸");
-        return "catch/catchCreatures";
+        return "catch/catchSeafood";
     }
+  
 
     // 複数登録（魚・虫・海の幸共通）
     @PostMapping("/{type}/register-multiple")
