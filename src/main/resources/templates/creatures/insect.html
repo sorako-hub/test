@@ -14,6 +14,13 @@
             text-align: center;
         }
 
+        /* ページ上部アンカー */
+        a#top {
+            display: block;
+            position: relative;
+            top: -20px;
+        }
+
         /* ====== ロゴ ====== */
         .logo {
             margin: 20px 0 10px 0;
@@ -23,7 +30,7 @@
         .card {
             max-width: 1000px;
             margin: 25px auto 60px auto;
-            background: #fffde7;
+            background: #f1f8e9;
             border-radius: 20px;
             padding: 35px 45px;
             box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.25);
@@ -41,13 +48,13 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            background-color: #6cc24a;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+            background-color: #81c784;
+            box-shadow: 0 4px 10px rgba(129, 199, 132, 0.4);
         }
         button:hover,
         .register-button:hover {
-            background-color: #4b9a3d;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            background-color: #66bb6a;
+            box-shadow: 0 6px 15px rgba(102, 187, 106, 0.4);
         }
 
         /* ====== セクション共通 ====== */
@@ -81,7 +88,7 @@
             gap: 30px;
         }
         .form-box {
-            background: #f0f9f1;
+            background: #dcedc8;
             border-radius: 20px;
             padding: 20px 25px;
             box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.06);
@@ -112,20 +119,20 @@
             flex-grow: 1;
             padding: 10px 12px;
             border-radius: 15px;
-            border: 1.5px solid #89c47c;
+            border: 1.5px solid #a5d6a7;
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         input:focus,
         select:focus {
             outline: none;
-            border-color: #5a9b33;
-            box-shadow: 0 0 8px #5a9b33aa;
+            border-color: #66bb6a;
+            box-shadow: 0 0 8px #66bb6aaa;
         }
         .form-box button {
             padding: 10px 20px;
             border-radius: 20px;
-            background-color: #6cc24a;
+            background-color: #81c784;
             color: white;
             font-weight: 700;
             border: none;
@@ -135,7 +142,7 @@
             margin-top: 10px;
         }
         .form-box button:hover {
-            background-color: #4b9a3d;
+            background-color: #66bb6a;
         }
 
         /* ====== メッセージ ====== */
@@ -144,7 +151,7 @@
             font-size: 22px;
             margin: 20px auto;
             color: #2e7d32;
-            background: #e8f5e9;
+            background: #dcedc8;
             padding: 12px 18px;
             border-radius: 18px;
             width: fit-content;
@@ -170,39 +177,70 @@
         th, td {
             padding: 12px 15px;
             border: 1px solid #ddd;
-            background-color: #fffde7;
-        }
-        th {
-            background: #c2d6a9;
-            font-weight: 700;
+            background-color: #f1f8e9;
             color: #2e7d32;
         }
+        th {
+            background: #a5d6a7;
+            font-weight: 700;
+        }
         tbody tr:nth-child(even) td {
-            background-color: #f7f9f2;
+            background-color: #dcedc8;
         }
 
-        /* ====== メニューに戻る ====== */
-        .btn-menu {
-            display: inline-block;
+        /* ====== 下部中央ボタン ====== */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
             margin: 40px auto 60px auto;
+            flex-wrap: wrap;
+        }
+        .btn-link {
+            display: inline-block;
             padding: 12px 25px;
-            background-color: #6cc24a;
+            background-color: #81c784;
             color: white;
             border-radius: 20px;
             font-weight: 700;
             font-size: 1.1rem;
             text-decoration: none;
-            box-shadow: 0 5px 15px rgba(108,194,74,0.6);
+            box-shadow: 0 5px 15px rgba(129,199,132,0.6);
             transition: all 0.3s ease;
         }
-        .btn-menu:hover {
-            background-color: #4b9a3d;
-            box-shadow: 0 8px 25px rgba(75,154,61,0.7);
+        .btn-link:hover {
+            background-color: #66bb6a;
+            box-shadow: 0 8px 25px rgba(102,187,106,0.7);
         }
+
+        /* ====== 右下固定ボタン ====== */
+        .btn-fixed {
+            position: fixed;
+            right: 30px;
+            padding: 12px 25px;
+            background-color: #81c784;
+            color: white;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(129,199,132,0.6);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+        }
+        .btn-fixed:hover {
+            background-color: #66bb6a;
+            box-shadow: 0 8px 25px rgba(102,187,106,0.7);
+        }
+        .btn-top-fixed { bottom: 80px; }
+        .btn-menu-fixed { bottom: 30px; }
     </style>
 </head>
 
 <body>
+    <!-- ページ上部アンカー -->
+    <a id="top"></a>
+
     <div class="logo">
         <img th:src="@{/images/logo.png}" alt="ロゴ" width="320" />
     </div>
@@ -230,7 +268,6 @@
                         <button type="submit">検索</button>
                     </form>
                 </div>
-
                 <div class="form-box">
                     <h3>月と半球で検索</h3>
                     <form th:action="@{/atsumori/insect/search}" method="get">
@@ -331,18 +368,19 @@
                     <th>出現期間</th>
                     <th>出現場所</th>
                     <th>出現時間帯</th>
+                    <th>値段</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="creature : ${creatures}">
                     <td th:text="${creature.id}">ID</td>
                     <td th:text="${creature.name}">名前</td>
-					<td>
-					    <b>北半球:</b>
-					    <span th:text="${creature.getFormattedAppearancePeriod('北半球')}">11月〜3月</span><br/>
-					    <b>南半球:</b>
-					    <span th:text="${creature.getFormattedAppearancePeriod('南半球')}">5月〜9月</span>
-					</td>
+                    <td>
+                        <b>北半球:</b>
+                        <span th:text="${creature.getFormattedAppearancePeriod('北半球')}">11月〜3月</span><br/>
+                        <b>南半球:</b>
+                        <span th:text="${creature.getFormattedAppearancePeriod('南半球')}">5月〜9月</span>
+                    </td>
                     <td>
                         <span th:each="area, iterStat : ${creature.areas}">
                             <span th:text="${area.name}"></span><span th:if="${!iterStat.last}">, </span>
@@ -353,11 +391,21 @@
                             <span th:text="${time.startTime.toString() + '〜' + time.endTime.toString()}"></span><span th:if="${!iterStat.last}">, </span>
                         </span>
                     </td>
+                    <td th:text="${creature.price + 'ベル'}">値段</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <a th:href="@{/menu}" class="btn-menu">🌿 メニューにもどる</a>
+    <!-- 下部中央ボタン -->
+    <div class="btn-container">
+        <a href="#top" class="btn-link">⬆ ページ上部へ戻る</a>
+        <a th:href="@{/menu}" class="btn-link">🌿 メニューにもどる</a>
+    </div>
+
+    <!-- 右下固定ボタン -->
+    <a href="#top" class="btn-fixed btn-top-fixed">⬆ 上に戻る</a>
+    <a th:href="@{/menu}" class="btn-fixed btn-menu-fixed">🌿 メニューにもどる</a>
+
 </body>
 </html>

@@ -13,13 +13,10 @@
             text-align: center;
         }
 
-        .logo {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
+        .logo { margin-top: 10px; margin-bottom: 10px; }
 
         .card {
-            background: #e0f7fa;
+            background: #FFF8E1;
             border-radius: 20px;
             padding: 20px 30px;
             margin: 0 auto 30px auto;
@@ -28,16 +25,8 @@
             box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
         }
 
-        h1 {
-            color: #0288d1;
-            margin-bottom: 10px;
-        }
-
-        p.description {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-        }
+        h1 { color: #FF7043; margin-bottom: 10px; }
+        p.description { font-size: 16px; color: #555; margin-bottom: 20px; }
 
         ul.creature-list {
             list-style: none;
@@ -51,28 +40,22 @@
         }
 
         ul.creature-list li {
-            background: #b3e5fc;
-            border: 2px solid #4fc3f7;
+            background: #FFAB91;
+            border: 2px solid #FF7043;
             border-radius: 10px;
             padding: 10px 20px;
             transition: 0.2s;
             font-weight: 600;
-            color: #01579b;
+            color: white;
         }
 
-        ul.creature-list li:hover {
-            background: #81d4fa;
-        }
+        ul.creature-list li:hover { background: #FF7043; }
 
-        input[type="checkbox"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
+        input[type="checkbox"] { margin-right: 10px; transform: scale(1.2); }
 
-        /* 登録ボタン */
         .register-btn {
             margin-top: 30px;
-            background: #0288d1;
+            background: #FF7043;
             border: none;
             color: white;
             padding: 12px 25px;
@@ -80,16 +63,12 @@
             font-size: 1.05rem;
             cursor: pointer;
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(2,136,209,0.5);
+            box-shadow: 0 4px 12px rgba(255,112,67,0.5);
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        .register-btn:hover {
-            background: #0277bd;
-            transform: translateY(-2px);
-        }
+        .register-btn:hover { background: #F4511E; transform: translateY(-2px); }
 
-        /* 下のボタンたち */
         .btn-container {
             display: flex;
             justify-content: center;
@@ -101,23 +80,39 @@
         .btn-link {
             display: inline-block;
             padding: 12px 25px;
-            background-color: #0288d1;
+            background-color: #FF7043;
             color: white;
             border-radius: 20px;
             font-weight: 700;
             font-size: 1.1rem;
             text-decoration: none;
-            box-shadow: 0 5px 15px rgba(2,136,209,0.7);
+            box-shadow: 0 5px 15px rgba(255,112,67,0.7);
             transition: background-color 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease;
         }
 
-        .btn-link:hover {
-            background-color: #0277bd;
-            box-shadow: 0 8px 25px rgba(2,119,189,0.8);
-            transform: translateY(-2px);
+        .btn-link:hover { background-color: #F4511E; box-shadow: 0 8px 25px rgba(244,81,30,0.8); transform: translateY(-2px); }
+
+        /* 右下固定ボタン */
+        .btn-fixed {
+            position: fixed;
+            right: 30px;
+            padding: 12px 25px;
+            background-color: #FF7043;
+            color: white;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(255,112,67,0.7);
+            transition: all 0.3s ease;
+            z-index: 1000;
         }
+        .btn-fixed:hover { background-color: #F4511E; box-shadow: 0 8px 25px rgba(244,81,30,0.8); }
+        .btn-menu-fixed { bottom: 30px; }
+        .btn-seafood-fixed { bottom: 80px; }
     </style>
 </head>
+
 <body>
     <div class="logo">
         <img th:src="@{/images/logo.png}" alt="ロゴ" width="320">
@@ -143,14 +138,17 @@
         </form>
     </div>
 
-    <!-- 下部リンクボタン -->
+    <!-- 下中央ボタン -->
     <div class="btn-container">
-        <!-- 海の幸図鑑リンク（権限別） -->
         <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori/seafood}" class="btn-link">🦀 海の幸図鑑へ</a>
         <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori/seafood}" class="btn-link">🦀 海の幸図鑑へ</a>
-
-        <!-- メニューへ戻る -->
         <a th:href="@{/menu}" class="btn-link">🌿 メニューにもどる</a>
     </div>
+
+    <!-- 右下固定ボタン -->
+    <a th:href="@{/menu}" class="btn-fixed btn-menu-fixed">🌿 メニューにもどる</a>
+    <a sec:authorize="hasAuthority('ADMIN')" th:href="@{/atsumori/seafood}" class="btn-fixed btn-seafood-fixed">🦀 海の幸図鑑へ</a>
+    <a sec:authorize="hasAuthority('USER')" th:href="@{/atsumori/seafood}" class="btn-fixed btn-seafood-fixed">🦀 海の幸図鑑へ</a>
+
 </body>
 </html>
