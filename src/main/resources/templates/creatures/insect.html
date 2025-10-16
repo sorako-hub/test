@@ -337,12 +337,12 @@
                 <tr th:each="creature : ${creatures}">
                     <td th:text="${creature.id}">ID</td>
                     <td th:text="${creature.name}">名前</td>
-                    <td>
-                        <b>北半球:</b>
-                        <span th:text="${creature.getFormattedAppearancePeriod('北半球')}">11月〜3月</span><br/>
-                        <b>南半球:</b>
-                        <span th:text="${creature.getFormattedAppearancePeriod('南半球')}">5月〜9月</span>
-                    </td>
+					<td>
+					    <b>北半球:</b>
+					    <span th:text="${creature.getFormattedAppearancePeriod('北半球')}">11月〜3月</span><br/>
+					    <b>南半球:</b>
+					    <span th:text="${creature.getFormattedAppearancePeriod('南半球')}">5月〜9月</span>
+					</td>
                     <td>
                         <span th:each="area, iterStat : ${creature.areas}">
                             <span th:text="${area.name}"></span><span th:if="${!iterStat.last}">, </span>
