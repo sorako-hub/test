@@ -74,8 +74,10 @@ CREATE TABLE creature_appearance_times (
 
 -- 認証情報を格納するテーブル
 --CREATE TABLE authentications (
-	-- ユーザー名：主キー
-	--username VARCHAR(50) PRIMARY KEY,
+	-- ID：主キー
+	--id int PRIMARY KEY,
+	--ユーザーネーム
+	--username VARCHAR(50) NOT NULL,,
 	-- パスワード
 	--password VARCHAR(255) NOT NULL,
 	-- 権限
